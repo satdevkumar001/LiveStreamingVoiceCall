@@ -14,6 +14,15 @@
         android:text="add call"
         android:onClick="addNewCall"
         />
+    <Button
+        android:id="@+id/btEndCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="End call"
+        android:onClick="EndVoiceCall"
+        android:visibility="gone"
+        />
     <FrameLayout
         android:id="@+id/remote_video_view_container"
         android:layout_width="match_parent"

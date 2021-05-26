@@ -30,7 +30,7 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
     private IRtcEngineEventHandler mRtcEventHandler ;
     private RtcEngine mRtcEngine;
     RtcChannel rtcChannel;
-
+    String addCall="notAdded";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,10 +185,14 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
     private void setupRemoteVideo(int uid) {
         if (channelProfile==Constants.CLIENT_ROLE_AUDIENCE){
             Log.e("TAG", "setupRemoteVideo: channelProfile is audience ");
-            SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
-            viedo.addView(surfaceView);
-            mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT,
-                    uid));
+            if (addCall.equals("added")){
+
+            }else {
+                SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
+                viedo.addView(surfaceView);
+                mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT,
+                        uid));
+            }
         }
         else {
             Log.e("TAG", "setupRemoteVideo: channelProfile is host " );
@@ -212,7 +216,8 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
         if (iv.isSelected()) {
             iv.setSelected(false);
             iv.clearColorFilter();
-        } else {
+        }
+        else {
             iv.setSelected(true);
             iv.setColorFilter(getResources().getColor(R.color.design_default_color_error), PorterDuff.Mode.MULTIPLY);
         }
@@ -229,7 +234,8 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
         if (iv.isSelected()) {
             iv.setSelected(false);
             iv.clearColorFilter();
-        } else {
+        }
+        else {
             iv.setSelected(true);
             iv.setColorFilter(getResources().getColor(R.color.design_default_color_background), PorterDuff.Mode.MULTIPLY);
         }
@@ -252,41 +258,11 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
 
     // add a voice call with host user to users
     public void addNewCall(View view) {
-                initAgoraEngineAndJoinChannel2();
+        initAgoraEngineAndJoinChannel2();
+        findViewById(R.id.btEndCall).setVisibility(View.VISIBLE);
+//        startActivity(new Intent(this,VoiceCall.class));
 
 
-//        rtcChannel = mRtcEngine.createRtcChannel("demoChannel2");
-//
-//        rtcChannel.setRtcChannelEventHandler(new IRtcChannelEventHandler()                                                                                                                         {
-//            @Override
-//            // Listen for the onJoinChannelSuccess callback.
-//            // This callback occurs when the local user successfully joins the channel.
-//            public void onJoinChannelSuccess(RtcChannel rtcChannel, int uid, int elapsed) {
-//                super.onJoinChannelSuccess(rtcChannel, uid, elapsed);
-//                Log.i("TAG", String.format("onJoinChannelSuccess channel %s uid %d", "demoChannel2", uid));
-//
-//            }
-//            @Override
-//            // Listen for the onUserJoinedcallback.
-//            // This callback occurs when a remote host joins a channel.
-//            public void onUserJoined(RtcChannel rtcChannel,final int uid, int elapsed) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        setupRemoteVideo2(uid);
-//                    }
-//                });
-//                super.onUserJoined(rtcChannel, uid, elapsed);
-//            }
-//
-//        });
-//
-//        ChannelMediaOptions option = new ChannelMediaOptions();
-//        option.autoSubscribeAudio = true;
-//
-//        rtcChannel.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
-//        rtcChannel.joinChannel(null, " ", 0, option);
-//        rtcChannel.publish();
     }
 
 
@@ -406,8 +382,11 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
         // Sets the channel profile of the Agora RtcEngine.
         // CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile. Use this profile in one-on-one calls or group calls, where all users can talk freely.
         // CHANNEL_PROFILE_LIVE_BROADCASTING(1): The Live-Broadcast profile. Users in a live-broadcast channel have a role as either broadcaster or audience. A broadcaster can both send and receive streams; an audience can only receive streams.
-        mRtcEngineVoice.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
 
+
+        mRtcEngineVoice.setChannelProfile(Constants.AUDIO_PROFILE_DEFAULT);
+        //        mRtcEngineVoice.enableVideo();
+        mRtcEngineVoice.disableVideo();
         // Allows a user to join a channel.
         mRtcEngineVoice.joinChannel(accessToken,
                 "voice", "Extra Optional Data", 0); // if you do not specify the uid, we will generate the uid for you
@@ -444,4 +423,10 @@ public class LiveStreamingAndVoiceCall extends AppCompatActivity {
 
     }
 
+    public void EndVoiceCall(View view) {
+        Toast.makeText(this, "You are disconneted succesfully.", Toast.LENGTH_SHORT).show();
+        findViewById(R.id.btEndCall).setVisibility(View.GONE);
+        mRtcEngineVoice.leaveChannel();
+        mRtcEngineVoice.destroy();
+    }
 }

@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="winni.satdev.livestreamingvoicecall.LiveStreamingAndVoiceCall"/>
+        <activity android:name="winni.satdev.livestreamingvoicecall.VoiceCall"/>
     </application>
 
 </manifest>
